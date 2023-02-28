@@ -24,3 +24,9 @@ doc/api/
 **/fastlane/Preview.html
 **/fastlane/screenshots/**/*.png
 **/fastlane/test_output
+
+# VS code
+.vscode/
+
+# .trustchain directory
+.trustchain/

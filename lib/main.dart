@@ -1,6 +1,7 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'pages/ffi_test.dart';
 import 'pages/keys_info.dart';
 
 void main() {
@@ -66,6 +67,9 @@ class _MyHomePageState extends State<MyHomePage> {
       case 2:
         page = KeysInfoPage();
         break;
+      case 3:
+        page = FfiPage();
+        break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }
@@ -90,6 +94,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     NavigationRailDestination(
                       icon: Icon(Icons.key),
                       label: Text('Keys Info'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.connect_without_contact),
+                      label: Text('FFI test'),
                     ),
                   ],
                   selectedIndex: selectedIndex,
