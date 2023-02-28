@@ -30,6 +30,10 @@ void wire_greet(int64_t port_);
 
 void wire_resolve(int64_t port_, struct wire_uint_8_list *did);
 
+void wire_didVerify(int64_t port_, struct wire_uint_8_list *did, uint32_t root_timestamp);
+
+void wire_attest(int64_t port_);
+
 void wire_create(int64_t port_, struct wire_uint_8_list *doc_state_str, bool verbose);
 
 struct wire_uint_8_list *new_uint_8_list_0(int32_t len);
@@ -40,6 +44,8 @@ static int64_t dummy_method_to_enforce_bundling(void) {
     int64_t dummy_var = 0;
     dummy_var ^= ((int64_t) (void*) wire_greet);
     dummy_var ^= ((int64_t) (void*) wire_resolve);
+    dummy_var ^= ((int64_t) (void*) wire_didVerify);
+    dummy_var ^= ((int64_t) (void*) wire_attest);
     dummy_var ^= ((int64_t) (void*) wire_create);
     dummy_var ^= ((int64_t) (void*) new_uint_8_list_0);
     dummy_var ^= ((int64_t) (void*) free_WireSyncReturn);

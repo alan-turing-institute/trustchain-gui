@@ -20,6 +20,15 @@ abstract class TrustchainFfiMacos {
 
   FlutterRustBridgeTaskConstMeta get kResolveConstMeta;
 
+  Future<String> didVerify(
+      {required String did, required int rootTimestamp, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kDidVerifyConstMeta;
+
+  Future<String> attest({dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kAttestConstMeta;
+
   Future<void> create(
       {String? docStateStr, required bool verbose, dynamic hint});
 
@@ -68,6 +77,41 @@ class TrustchainFfiMacosImpl implements TrustchainFfiMacos {
         argNames: ["did"],
       );
 
+  Future<String> didVerify(
+      {required String did, required int rootTimestamp, dynamic hint}) {
+    var arg0 = _platform.api2wire_String(did);
+    var arg1 = api2wire_u32(rootTimestamp);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_didVerify(port_, arg0, arg1),
+      parseSuccessData: _wire2api_String,
+      constMeta: kDidVerifyConstMeta,
+      argValues: [did, rootTimestamp],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kDidVerifyConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "didVerify",
+        argNames: ["did", "rootTimestamp"],
+      );
+
+  Future<String> attest({dynamic hint}) {
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_attest(port_),
+      parseSuccessData: _wire2api_String,
+      constMeta: kAttestConstMeta,
+      argValues: [],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kAttestConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "attest",
+        argNames: [],
+      );
+
   Future<void> create(
       {String? docStateStr, required bool verbose, dynamic hint}) {
     var arg0 = _platform.api2wire_opt_String(docStateStr);
@@ -113,6 +157,11 @@ class TrustchainFfiMacosImpl implements TrustchainFfiMacos {
 
 @protected
 bool api2wire_bool(bool raw) {
+  return raw;
+}
+
+@protected
+int api2wire_u32(int raw) {
   return raw;
 }
 
@@ -274,6 +323,37 @@ class TrustchainFfiMacosWire implements FlutterRustBridgeWireBase {
               ffi.Int64, ffi.Pointer<wire_uint_8_list>)>>('wire_resolve');
   late final _wire_resolve = _wire_resolvePtr
       .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_didVerify(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> did,
+    int root_timestamp,
+  ) {
+    return _wire_didVerify(
+      port_,
+      did,
+      root_timestamp,
+    );
+  }
+
+  late final _wire_didVerifyPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
+              ffi.Uint32)>>('wire_didVerify');
+  late final _wire_didVerify = _wire_didVerifyPtr
+      .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>, int)>();
+
+  void wire_attest(
+    int port_,
+  ) {
+    return _wire_attest(
+      port_,
+    );
+  }
+
+  late final _wire_attestPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>('wire_attest');
+  late final _wire_attest = _wire_attestPtr.asFunction<void Function(int)>();
 
   void wire_create(
     int port_,
