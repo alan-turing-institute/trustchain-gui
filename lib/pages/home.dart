@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:learn_flutter/pages/did.dart';
 import 'package:learn_flutter/pages/splash.dart';
 import 'package:learn_flutter/pages/vc.dart';
+import 'package:learn_flutter/pages/sandbox.dart';
 import 'package:learn_flutter/ui/ui.dart';
 
 class HomePage extends StatefulWidget {
@@ -23,6 +24,9 @@ class _HomePageState extends State<HomePage> {
         break;
       case 2:
         page = VCPage();
+        break;
+      case 3:
+        page = SandboxPage();
         break;
       default:
         throw UnimplementedError('No widget for $selectedIndex');
@@ -48,6 +52,10 @@ class _HomePageState extends State<HomePage> {
                     NavigationRailDestination(
                       icon: Icon(Icons.document_scanner_outlined),
                       label: Text('VC Functionality'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.build),
+                      label: Text('Sandbox'),
                     ),
                   ],
                   selectedIndex: selectedIndex,

@@ -15,6 +15,14 @@ abstract class TrustchainFfiMacos {
 
   FlutterRustBridgeTaskConstMeta get kGreetConstMeta;
 
+  Future<String> returnResult({required bool erroring, dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kReturnResultConstMeta;
+
+  Future<MyStruct> returnCustomStruct({dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kReturnCustomStructConstMeta;
+
   /// Example resolve interface.
   Future<String> resolve({required String did, dynamic hint});
 
@@ -33,6 +41,16 @@ abstract class TrustchainFfiMacos {
       {String? docStateStr, required bool verbose, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kCreateConstMeta;
+}
+
+class MyStruct {
+  final String a;
+  final int b;
+
+  MyStruct({
+    required this.a,
+    required this.b,
+  });
 }
 
 class TrustchainFfiMacosImpl implements TrustchainFfiMacos {
@@ -57,6 +75,39 @@ class TrustchainFfiMacosImpl implements TrustchainFfiMacos {
   FlutterRustBridgeTaskConstMeta get kGreetConstMeta =>
       const FlutterRustBridgeTaskConstMeta(
         debugName: "greet",
+        argNames: [],
+      );
+
+  Future<String> returnResult({required bool erroring, dynamic hint}) {
+    var arg0 = erroring;
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_returnResult(port_, arg0),
+      parseSuccessData: _wire2api_String,
+      constMeta: kReturnResultConstMeta,
+      argValues: [erroring],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kReturnResultConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "returnResult",
+        argNames: ["erroring"],
+      );
+
+  Future<MyStruct> returnCustomStruct({dynamic hint}) {
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_returnCustomStruct(port_),
+      parseSuccessData: _wire2api_my_struct,
+      constMeta: kReturnCustomStructConstMeta,
+      argValues: [],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kReturnCustomStructConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "returnCustomStruct",
         argNames: [],
       );
 
@@ -138,6 +189,20 @@ class TrustchainFfiMacosImpl implements TrustchainFfiMacos {
 
   String _wire2api_String(dynamic raw) {
     return raw as String;
+  }
+
+  MyStruct _wire2api_my_struct(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return MyStruct(
+      a: _wire2api_String(arr[0]),
+      b: _wire2api_u32(arr[1]),
+    );
+  }
+
+  int _wire2api_u32(dynamic raw) {
+    return raw as int;
   }
 
   int _wire2api_u8(dynamic raw) {
@@ -306,6 +371,36 @@ class TrustchainFfiMacosWire implements FlutterRustBridgeWireBase {
   late final _wire_greetPtr =
       _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>('wire_greet');
   late final _wire_greet = _wire_greetPtr.asFunction<void Function(int)>();
+
+  void wire_returnResult(
+    int port_,
+    bool erroring,
+  ) {
+    return _wire_returnResult(
+      port_,
+      erroring,
+    );
+  }
+
+  late final _wire_returnResultPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Bool)>>(
+          'wire_returnResult');
+  late final _wire_returnResult =
+      _wire_returnResultPtr.asFunction<void Function(int, bool)>();
+
+  void wire_returnCustomStruct(
+    int port_,
+  ) {
+    return _wire_returnCustomStruct(
+      port_,
+    );
+  }
+
+  late final _wire_returnCustomStructPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+          'wire_returnCustomStruct');
+  late final _wire_returnCustomStruct =
+      _wire_returnCustomStructPtr.asFunction<void Function(int)>();
 
   void wire_resolve(
     int port_,

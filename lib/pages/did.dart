@@ -67,6 +67,7 @@ class _DIDPageState extends State<DIDPage> {
     return Padding(
       padding: const EdgeInsets.only(top: 50,left: 50,right: 50),
       child: ListView.separated(
+        padding: EdgeInsets.only(bottom: 50),
         itemCount: 4,
         separatorBuilder: (BuildContext context, int index) => SizedBox(height: 30,),
         itemBuilder: (BuildContext context, int index) {

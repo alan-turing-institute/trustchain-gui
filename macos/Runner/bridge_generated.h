@@ -28,6 +28,10 @@ intptr_t init_frb_dart_api_dl(void *obj);
 
 void wire_greet(int64_t port_);
 
+void wire_returnResult(int64_t port_, bool erroring);
+
+void wire_returnCustomStruct(int64_t port_);
+
 void wire_resolve(int64_t port_, struct wire_uint_8_list *did);
 
 void wire_didVerify(int64_t port_, struct wire_uint_8_list *did, uint32_t root_timestamp);
@@ -43,6 +47,8 @@ void free_WireSyncReturn(WireSyncReturn ptr);
 static int64_t dummy_method_to_enforce_bundling(void) {
     int64_t dummy_var = 0;
     dummy_var ^= ((int64_t) (void*) wire_greet);
+    dummy_var ^= ((int64_t) (void*) wire_returnResult);
+    dummy_var ^= ((int64_t) (void*) wire_returnCustomStruct);
     dummy_var ^= ((int64_t) (void*) wire_resolve);
     dummy_var ^= ((int64_t) (void*) wire_didVerify);
     dummy_var ^= ((int64_t) (void*) wire_attest);
