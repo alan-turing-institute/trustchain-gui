@@ -46,10 +46,20 @@ abstract class TrustchainFfiMacos {
 class MyStruct {
   final String a;
   final int b;
+  final MySubStruct subStruct;
 
   MyStruct({
     required this.a,
     required this.b,
+    required this.subStruct,
+  });
+}
+
+class MySubStruct {
+  final String c;
+
+  MySubStruct({
+    required this.c,
   });
 }
 
@@ -193,11 +203,21 @@ class TrustchainFfiMacosImpl implements TrustchainFfiMacos {
 
   MyStruct _wire2api_my_struct(dynamic raw) {
     final arr = raw as List<dynamic>;
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
     return MyStruct(
       a: _wire2api_String(arr[0]),
       b: _wire2api_u32(arr[1]),
+      subStruct: _wire2api_my_sub_struct(arr[2]),
+    );
+  }
+
+  MySubStruct _wire2api_my_sub_struct(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 1)
+      throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
+    return MySubStruct(
+      c: _wire2api_String(arr[0]),
     );
   }
 

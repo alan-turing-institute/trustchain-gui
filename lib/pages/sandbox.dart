@@ -7,6 +7,15 @@ import 'package:learn_flutter/ffi.dart';
 import 'package:learn_flutter/ui/ui.dart';
 import 'package:learn_flutter/credible_imports/credible_shared_widget/tooltip_text.dart';
 
+// class MyStruct {
+//     String a;
+//     int b;
+//     MySubStruct subStruct;
+//   }
+
+//   class MySubStruct {
+//     c: String
+//   }
 
 class _SandboxPageState extends State<SandboxPage> {
   final resolveInputCtrl = TextEditingController();
@@ -59,13 +68,18 @@ class _SandboxPageState extends State<SandboxPage> {
     });
   }
 
+  
+
   void doCustomStruct() {
     api.returnCustomStruct().then((value) => {
       setState(() {
         doCustomStructReturn = '''
           {
             a: ${value.a},
-            b: ${value.b.toString()}
+            b: ${value.b.toString()},
+            subStruct: {
+              c: ${value.subStruct.c}
+            }
           }
         ''';
       })
