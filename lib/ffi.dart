@@ -11,13 +11,12 @@ import 'bridge_generated.dart';
 export 'bridge_generated.dart';
 import 'dart:io' as io;
 
-// const _base = 'whatever';
+const _base = 'trustchain-ffi';
 
 // On MacOS, the dynamic library is not bundled with the binary,
 // but rather directly **linked** against the binary.
-// final _dylib = io.Platform.isWindows ? '$_base.dll' : 'lib$_base.so';
-// final TrustchainFfiMacos api = TrustchainFfiMacosImpl(io.Platform.isIOS || io.Platform.isMacOS
-//     ? DynamicLibrary.executable()
-//     : DynamicLibrary.open('libwhatever.so'));
-// final TrustchainFfiMacos api = TrustchainFfiMacosImpl(DynamicLibrary.open('/Users/echapman/Projects/trustchain-gui/build/macos/Build/Products/Debug/trustchain-ffi-macos.dylib'));
-final TrustchainFfiMacos api = TrustchainFfiMacosImpl(DynamicLibrary.executable());
+final _dylib = io.Platform.isWindows ? '$_base.dll' : 'lib$_base.so';
+
+final TrustchainFfi api = TrustchainFfiImpl(io.Platform.isIOS || io.Platform.isMacOS
+    ? DynamicLibrary.executable()
+    : DynamicLibrary.open(_dylib));

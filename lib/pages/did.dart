@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:learn_flutter/credible_imports/credible_shared_widget/base/button.dart';
+import 'package:learn_flutter/credible_imports/trustchain_models/chain.dart';
 import 'package:learn_flutter/credible_imports/trustchain_widgets/document.dart';
+import 'package:learn_flutter/credible_imports/trustchain_widgets/chain.dart';
 import 'package:learn_flutter/ffi.dart';
 import 'package:learn_flutter/ui/ui.dart';
 import 'package:learn_flutter/credible_imports/credible_shared_widget/tooltip_text.dart';
@@ -9,16 +13,16 @@ import 'package:learn_flutter/credible_imports/credible_shared_widget/tooltip_te
 class _DIDPageState extends State<DIDPage> {
   final resolveInputCtrl = TextEditingController();
   final createInputCtrl = TextEditingController();
+  final attestDidInputCtrl = TextEditingController();
+  final attestControlledDidInputCtrl = TextEditingController();
   final verifyDIDInputCtrl = TextEditingController();
-  final verifyRTSInputCtrl = TextEditingController();
 
   var resolvedDid = '';
-  var createdDid = '';
   var attestReturn = '';
-  var verifiedChain = '';
+  var verifiedChainMap;
 
   void doResolve() {
-    api.resolve(did: resolveInputCtrl.text).then((value) => {
+    api.resolve(did: resolveInputCtrl.text, verbose: true).then((value) => {
       setState(() {
         resolvedDid = value;
       })
@@ -26,38 +30,39 @@ class _DIDPageState extends State<DIDPage> {
   }
 
   void doCreate() {
-    var config = resolveInputCtrl.text;
-
-    api.create(
-      verbose: true,
-      // docStateStr:
-      // '''
-      // {
-      //   "services": [
-      //     {
-      //       "id": "12345",
-      //       "r#type": "6789101112",
-      //       "service_endpoint": "https://testendpointnameeasytospotlater.com"
-      //     }
-          
-      //   ]
-      // }
-      // '''
-    );
-  }
+    var docState = createInputCtrl.text;
+    if (docState.isNotEmpty) {
+      api.create(verbose: true, docState: docState);
+    } else {
+      api.create(verbose: true);
+    }
+  } 
+  // docStateStr:
+  // '''
+  // {
+  //   "services": [
+  //     {
+  //       "id": "12345",
+  //       "type": "6789101112",
+  //       "serviceEndpoint": "https://testendpointnameeasytospotlater.com"
+  //     }
+      
+  //   ]
+  // }
+  // '''
 
   void doAttest() {
-    api.attest().then((value) => {
-      setState(() {
-        attestReturn = value;
-      })
-    });
+    api.attest(did: attestDidInputCtrl.text,
+                controlledDid: attestControlledDidInputCtrl.text,
+                verbose: true);
   }
 
   void doVerify() {
-    api.didVerify(did: verifyDIDInputCtrl.text, rootTimestamp: int.parse(verifyRTSInputCtrl.text)).then((val) => {
+    api.verify(did: verifyDIDInputCtrl.text, verbose: true).then((val) => {
       setState(() {
-        verifiedChain = val;
+        print(val);
+        Map<String, dynamic> map = jsonDecode(val);
+        verifiedChainMap = map.cast<String, List<Map<String, dynamic>>>();
       })
     });
   }
@@ -103,7 +108,7 @@ class _DIDPageState extends State<DIDPage> {
                     child: BaseButton.primary(onPressed: doResolve, child: Text("Resolve"))),
                   if (resolvedDid.isNotEmpty)...[
                     SizedBox(height: 20,),
-                    DIDDocumentWidget(model: DIDDocumentWidgetModel(resolvedDid,"TODO"))
+                    DIDDocumentWidget(model: DIDDocumentWidgetModel(resolvedDid,"TODO!"))
                   ]
                 ],
               ),
@@ -138,10 +143,6 @@ class _DIDPageState extends State<DIDPage> {
                   SizedBox(
                     width: 200,
                     child: BaseButton.primary(onPressed: doCreate, child: Text("Create"))),
-                  if (createdDid.isNotEmpty)...[
-                    SizedBox(height: 20,),
-                    DIDDocumentWidget(model: DIDDocumentWidgetModel(createdDid,"TODO"))
-                  ]
                 ],
               ),
             )
@@ -163,12 +164,27 @@ class _DIDPageState extends State<DIDPage> {
                       style: UiKit.text.textTheme.bodyMedium,
                       decoration: InputDecoration(
                         // border: OutlineInputBorder(),
-                        hintText: 'TODO...',
+                        hintText: 'Enter a DID',
                         hintStyle: UiKit.text.textTheme.bodyMedium,
                         focusColor: UiKit.palette.textFieldBorder,
                   
                       ),
-                      controller: createInputCtrl,
+                      controller: attestDidInputCtrl,
+                    ),
+                  ),
+                  SizedBox(height: 20,),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                    child: TextField(
+                      style: UiKit.text.textTheme.bodyMedium,
+                      decoration: InputDecoration(
+                        // border: OutlineInputBorder(),
+                        hintText: 'Enter a Controlled DID',
+                        hintStyle: UiKit.text.textTheme.bodyMedium,
+                        focusColor: UiKit.palette.textFieldBorder,
+                  
+                      ),
+                      controller: attestControlledDidInputCtrl,
                     ),
                   ),
                   SizedBox(height: 20,),
@@ -209,30 +225,32 @@ class _DIDPageState extends State<DIDPage> {
                     ),
                   ),
                   SizedBox(height: 20,),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                    child: TextField(
-                      style: UiKit.text.textTheme.bodyMedium,
-                      decoration: InputDecoration(
-                        // border: OutlineInputBorder(),
-                        hintText: 'Enter a root timestamp',
-                        hintStyle: UiKit.text.textTheme.bodyMedium,
-                        focusColor: UiKit.palette.textFieldBorder,
-                  
-                      ),
-                      controller: verifyRTSInputCtrl,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    ),
-                  ),
-                  SizedBox(height: 20,),
                   SizedBox(
                     width: 200,
                     child: BaseButton.primary(onPressed: doVerify, child: Text("Verify"))),
-                  if (verifiedChain.isNotEmpty)...[
-                    SizedBox(height: 20,),
-                    DIDDocumentWidget(model: DIDDocumentWidgetModel(verifiedChain,"TODO"))
-                  ]
+                  // if (verifiedChainMap != null)...[
+                  //   SizedBox(height: 20,),
+                  //   ListView(
+                  //   children: DIDChainWidgetModel.fromDIDChainModel(DIDChainModel.fromMap(verifiedChainMap)).data
+                  //       .map((w) => Padding(
+                  //             padding: const EdgeInsets.all(8.0),
+                  //             child: Row(
+                  //               children: [
+                  //                 Expanded(
+                  //                     flex: 20,
+                  //                     child: DIDDocumentWidget(model: w)),
+                  //                 Expanded(
+                  //                     flex: 2,
+                  //                     child: Icon(Icons.check_circle_rounded,
+                  //                         size: 40,
+                  //                         color:
+                  //                             Color.fromARGB(255, 7, 111, 10)))
+                  //               ],
+                  //             ),
+                  //           ))
+                  //       .toList(),
+                  //     )
+                  //   ]
                 ],
               ),
             )

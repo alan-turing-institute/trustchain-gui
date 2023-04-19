@@ -25,9 +25,9 @@ class _HomePageState extends State<HomePage> {
       case 2:
         page = VCPage();
         break;
-      case 3:
-        page = SandboxPage();
-        break;
+      // case 3:
+      //   page = SandboxPage();
+      //   break;
       default:
         throw UnimplementedError('No widget for $selectedIndex');
     }
@@ -53,10 +53,10 @@ class _HomePageState extends State<HomePage> {
                       icon: Icon(Icons.document_scanner_outlined),
                       label: Text('VC Functionality'),
                     ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.build),
-                      label: Text('Sandbox'),
-                    ),
+                    // NavigationRailDestination(
+                    //   icon: Icon(Icons.build),
+                    //   label: Text('Sandbox'),
+                    // ),
                   ],
                   selectedIndex: selectedIndex,
                   onDestinationSelected: (value) {
