@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:learn_flutter/credible_imports/credible_shared_widget/base/button.dart';
-import 'package:learn_flutter/credible_imports/trustchain_models/chain.dart';
+import 'package:trustchain_dart/trustchain_dart.dart';
 import 'package:learn_flutter/credible_imports/trustchain_widgets/document.dart';
 import 'package:learn_flutter/credible_imports/trustchain_widgets/chain.dart';
 import 'package:learn_flutter/ffi.dart';
