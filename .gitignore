@@ -1,5 +1,8 @@
 # See https://www.dartlang.org/guides/libraries/private-files
 
+# flutter
+.flutter-plugins-dependencies
+
 # Files and directories created by pub
 .dart_tool/
 .packages
@@ -30,3 +33,4 @@ doc/api/
 
 # .trustchain directory
 .trustchain/
+trustchain

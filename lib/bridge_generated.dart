@@ -9,116 +9,82 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 
 import 'dart:ffi' as ffi;
 
-abstract class TrustchainFfiMacos {
-  /// Example greet function.
-  Future<String> greet({dynamic hint});
+abstract class TrustchainFfi {
+  /// Creates a controlled DID from a passed document state, writing the associated create operation to file in the operations path.
+  Future<void> create({String? docState, required bool verbose, dynamic hint});
 
-  FlutterRustBridgeTaskConstMeta get kGreetConstMeta;
+  FlutterRustBridgeTaskConstMeta get kCreateConstMeta;
 
-  Future<String> returnResult({required bool erroring, dynamic hint});
+  /// An uDID attests to a dDID, writing the associated update operation to file in the operations path.
+  Future<void> attest(
+      {required String did,
+      required String controlledDid,
+      required bool verbose,
+      dynamic hint});
 
-  FlutterRustBridgeTaskConstMeta get kReturnResultConstMeta;
+  FlutterRustBridgeTaskConstMeta get kAttestConstMeta;
 
-  Future<MyStruct> returnCustomStruct({dynamic hint});
-
-  FlutterRustBridgeTaskConstMeta get kReturnCustomStructConstMeta;
-
-  /// Example resolve interface.
+  /// Resolves a given DID using a resolver available at localhost:3000
   Future<String> resolve({required String did, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kResolveConstMeta;
 
-  Future<String> didVerify(
-      {required String did, required int rootTimestamp, dynamic hint});
+  /// TODO: the below have no CLI implementation currently but are planned
+  /// Verifies a given DID using a resolver available at localhost:3000, returning a result.
+  Future<String> verify(
+      {required String did, required bool verbose, dynamic hint});
 
-  FlutterRustBridgeTaskConstMeta get kDidVerifyConstMeta;
-
-  Future<String> attest({dynamic hint});
-
-  FlutterRustBridgeTaskConstMeta get kAttestConstMeta;
-
-  Future<void> create(
-      {String? docStateStr, required bool verbose, dynamic hint});
-
-  FlutterRustBridgeTaskConstMeta get kCreateConstMeta;
+  FlutterRustBridgeTaskConstMeta get kVerifyConstMeta;
 }
 
-class MyStruct {
-  final String a;
-  final int b;
-  final MySubStruct subStruct;
-
-  MyStruct({
-    required this.a,
-    required this.b,
-    required this.subStruct,
-  });
-}
-
-class MySubStruct {
-  final String c;
-
-  MySubStruct({
-    required this.c,
-  });
-}
-
-class TrustchainFfiMacosImpl implements TrustchainFfiMacos {
-  final TrustchainFfiMacosPlatform _platform;
-  factory TrustchainFfiMacosImpl(ExternalLibrary dylib) =>
-      TrustchainFfiMacosImpl.raw(TrustchainFfiMacosPlatform(dylib));
+class TrustchainFfiImpl implements TrustchainFfi {
+  final TrustchainFfiPlatform _platform;
+  factory TrustchainFfiImpl(ExternalLibrary dylib) =>
+      TrustchainFfiImpl.raw(TrustchainFfiPlatform(dylib));
 
   /// Only valid on web/WASM platforms.
-  factory TrustchainFfiMacosImpl.wasm(FutureOr<WasmModule> module) =>
-      TrustchainFfiMacosImpl(module as ExternalLibrary);
-  TrustchainFfiMacosImpl.raw(this._platform);
-  Future<String> greet({dynamic hint}) {
+  factory TrustchainFfiImpl.wasm(FutureOr<WasmModule> module) =>
+      TrustchainFfiImpl(module as ExternalLibrary);
+  TrustchainFfiImpl.raw(this._platform);
+  Future<void> create({String? docState, required bool verbose, dynamic hint}) {
+    var arg0 = _platform.api2wire_opt_String(docState);
+    var arg1 = verbose;
     return _platform.executeNormal(FlutterRustBridgeTask(
-      callFfi: (port_) => _platform.inner.wire_greet(port_),
-      parseSuccessData: _wire2api_String,
-      constMeta: kGreetConstMeta,
-      argValues: [],
+      callFfi: (port_) => _platform.inner.wire_create(port_, arg0, arg1),
+      parseSuccessData: _wire2api_unit,
+      constMeta: kCreateConstMeta,
+      argValues: [docState, verbose],
       hint: hint,
     ));
   }
 
-  FlutterRustBridgeTaskConstMeta get kGreetConstMeta =>
+  FlutterRustBridgeTaskConstMeta get kCreateConstMeta =>
       const FlutterRustBridgeTaskConstMeta(
-        debugName: "greet",
-        argNames: [],
+        debugName: "create",
+        argNames: ["docState", "verbose"],
       );
 
-  Future<String> returnResult({required bool erroring, dynamic hint}) {
-    var arg0 = erroring;
+  Future<void> attest(
+      {required String did,
+      required String controlledDid,
+      required bool verbose,
+      dynamic hint}) {
+    var arg0 = _platform.api2wire_String(did);
+    var arg1 = _platform.api2wire_String(controlledDid);
+    var arg2 = verbose;
     return _platform.executeNormal(FlutterRustBridgeTask(
-      callFfi: (port_) => _platform.inner.wire_returnResult(port_, arg0),
-      parseSuccessData: _wire2api_String,
-      constMeta: kReturnResultConstMeta,
-      argValues: [erroring],
+      callFfi: (port_) => _platform.inner.wire_attest(port_, arg0, arg1, arg2),
+      parseSuccessData: _wire2api_unit,
+      constMeta: kAttestConstMeta,
+      argValues: [did, controlledDid, verbose],
       hint: hint,
     ));
   }
 
-  FlutterRustBridgeTaskConstMeta get kReturnResultConstMeta =>
+  FlutterRustBridgeTaskConstMeta get kAttestConstMeta =>
       const FlutterRustBridgeTaskConstMeta(
-        debugName: "returnResult",
-        argNames: ["erroring"],
-      );
-
-  Future<MyStruct> returnCustomStruct({dynamic hint}) {
-    return _platform.executeNormal(FlutterRustBridgeTask(
-      callFfi: (port_) => _platform.inner.wire_returnCustomStruct(port_),
-      parseSuccessData: _wire2api_my_struct,
-      constMeta: kReturnCustomStructConstMeta,
-      argValues: [],
-      hint: hint,
-    ));
-  }
-
-  FlutterRustBridgeTaskConstMeta get kReturnCustomStructConstMeta =>
-      const FlutterRustBridgeTaskConstMeta(
-        debugName: "returnCustomStruct",
-        argNames: [],
+        debugName: "attest",
+        argNames: ["did", "controlledDid", "verbose"],
       );
 
   Future<String> resolve({required String did, dynamic hint}) {
@@ -138,58 +104,23 @@ class TrustchainFfiMacosImpl implements TrustchainFfiMacos {
         argNames: ["did"],
       );
 
-  Future<String> didVerify(
-      {required String did, required int rootTimestamp, dynamic hint}) {
+  Future<String> verify(
+      {required String did, required bool verbose, dynamic hint}) {
     var arg0 = _platform.api2wire_String(did);
-    var arg1 = api2wire_u32(rootTimestamp);
-    return _platform.executeNormal(FlutterRustBridgeTask(
-      callFfi: (port_) => _platform.inner.wire_didVerify(port_, arg0, arg1),
-      parseSuccessData: _wire2api_String,
-      constMeta: kDidVerifyConstMeta,
-      argValues: [did, rootTimestamp],
-      hint: hint,
-    ));
-  }
-
-  FlutterRustBridgeTaskConstMeta get kDidVerifyConstMeta =>
-      const FlutterRustBridgeTaskConstMeta(
-        debugName: "didVerify",
-        argNames: ["did", "rootTimestamp"],
-      );
-
-  Future<String> attest({dynamic hint}) {
-    return _platform.executeNormal(FlutterRustBridgeTask(
-      callFfi: (port_) => _platform.inner.wire_attest(port_),
-      parseSuccessData: _wire2api_String,
-      constMeta: kAttestConstMeta,
-      argValues: [],
-      hint: hint,
-    ));
-  }
-
-  FlutterRustBridgeTaskConstMeta get kAttestConstMeta =>
-      const FlutterRustBridgeTaskConstMeta(
-        debugName: "attest",
-        argNames: [],
-      );
-
-  Future<void> create(
-      {String? docStateStr, required bool verbose, dynamic hint}) {
-    var arg0 = _platform.api2wire_opt_String(docStateStr);
     var arg1 = verbose;
     return _platform.executeNormal(FlutterRustBridgeTask(
-      callFfi: (port_) => _platform.inner.wire_create(port_, arg0, arg1),
-      parseSuccessData: _wire2api_unit,
-      constMeta: kCreateConstMeta,
-      argValues: [docStateStr, verbose],
+      callFfi: (port_) => _platform.inner.wire_verify(port_, arg0, arg1),
+      parseSuccessData: _wire2api_String,
+      constMeta: kVerifyConstMeta,
+      argValues: [did, verbose],
       hint: hint,
     ));
   }
 
-  FlutterRustBridgeTaskConstMeta get kCreateConstMeta =>
+  FlutterRustBridgeTaskConstMeta get kVerifyConstMeta =>
       const FlutterRustBridgeTaskConstMeta(
-        debugName: "create",
-        argNames: ["docStateStr", "verbose"],
+        debugName: "verify",
+        argNames: ["did", "verbose"],
       );
 
   void dispose() {
@@ -199,30 +130,6 @@ class TrustchainFfiMacosImpl implements TrustchainFfiMacos {
 
   String _wire2api_String(dynamic raw) {
     return raw as String;
-  }
-
-  MyStruct _wire2api_my_struct(dynamic raw) {
-    final arr = raw as List<dynamic>;
-    if (arr.length != 3)
-      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
-    return MyStruct(
-      a: _wire2api_String(arr[0]),
-      b: _wire2api_u32(arr[1]),
-      subStruct: _wire2api_my_sub_struct(arr[2]),
-    );
-  }
-
-  MySubStruct _wire2api_my_sub_struct(dynamic raw) {
-    final arr = raw as List<dynamic>;
-    if (arr.length != 1)
-      throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
-    return MySubStruct(
-      c: _wire2api_String(arr[0]),
-    );
-  }
-
-  int _wire2api_u32(dynamic raw) {
-    return raw as int;
   }
 
   int _wire2api_u8(dynamic raw) {
@@ -246,21 +153,15 @@ bool api2wire_bool(bool raw) {
 }
 
 @protected
-int api2wire_u32(int raw) {
-  return raw;
-}
-
-@protected
 int api2wire_u8(int raw) {
   return raw;
 }
 
 // Section: finalizer
 
-class TrustchainFfiMacosPlatform
-    extends FlutterRustBridgeBase<TrustchainFfiMacosWire> {
-  TrustchainFfiMacosPlatform(ffi.DynamicLibrary dylib)
-      : super(TrustchainFfiMacosWire(dylib));
+class TrustchainFfiPlatform extends FlutterRustBridgeBase<TrustchainFfiWire> {
+  TrustchainFfiPlatform(ffi.DynamicLibrary dylib)
+      : super(TrustchainFfiWire(dylib));
 
 // Section: api2wire
 
@@ -292,7 +193,7 @@ class TrustchainFfiMacosPlatform
 // Generated by `package:ffigen`.
 
 /// generated by flutter_rust_bridge
-class TrustchainFfiMacosWire implements FlutterRustBridgeWireBase {
+class TrustchainFfiWire implements FlutterRustBridgeWireBase {
   @internal
   late final dartApi = DartApiDl(init_frb_dart_api_dl);
 
@@ -301,11 +202,11 @@ class TrustchainFfiMacosWire implements FlutterRustBridgeWireBase {
       _lookup;
 
   /// The symbols are looked up in [dynamicLibrary].
-  TrustchainFfiMacosWire(ffi.DynamicLibrary dynamicLibrary)
+  TrustchainFfiWire(ffi.DynamicLibrary dynamicLibrary)
       : _lookup = dynamicLibrary.lookup;
 
   /// The symbols are looked up with [lookup].
-  TrustchainFfiMacosWire.fromLookup(
+  TrustchainFfiWire.fromLookup(
       ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
           lookup)
       : _lookup = lookup;
@@ -380,47 +281,46 @@ class TrustchainFfiMacosWire implements FlutterRustBridgeWireBase {
   late final _init_frb_dart_api_dl = _init_frb_dart_api_dlPtr
       .asFunction<int Function(ffi.Pointer<ffi.Void>)>();
 
-  void wire_greet(
+  void wire_create(
     int port_,
+    ffi.Pointer<wire_uint_8_list> doc_state,
+    bool verbose,
   ) {
-    return _wire_greet(
+    return _wire_create(
       port_,
+      doc_state,
+      verbose,
     );
   }
 
-  late final _wire_greetPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>('wire_greet');
-  late final _wire_greet = _wire_greetPtr.asFunction<void Function(int)>();
+  late final _wire_createPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
+              ffi.Bool)>>('wire_create');
+  late final _wire_create = _wire_createPtr
+      .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>, bool)>();
 
-  void wire_returnResult(
+  void wire_attest(
     int port_,
-    bool erroring,
+    ffi.Pointer<wire_uint_8_list> did,
+    ffi.Pointer<wire_uint_8_list> controlled_did,
+    bool verbose,
   ) {
-    return _wire_returnResult(
+    return _wire_attest(
       port_,
-      erroring,
+      did,
+      controlled_did,
+      verbose,
     );
   }
 
-  late final _wire_returnResultPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64, ffi.Bool)>>(
-          'wire_returnResult');
-  late final _wire_returnResult =
-      _wire_returnResultPtr.asFunction<void Function(int, bool)>();
-
-  void wire_returnCustomStruct(
-    int port_,
-  ) {
-    return _wire_returnCustomStruct(
-      port_,
-    );
-  }
-
-  late final _wire_returnCustomStructPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-          'wire_returnCustomStruct');
-  late final _wire_returnCustomStruct =
-      _wire_returnCustomStructPtr.asFunction<void Function(int)>();
+  late final _wire_attestPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>, ffi.Bool)>>('wire_attest');
+  late final _wire_attest = _wire_attestPtr.asFunction<
+      void Function(int, ffi.Pointer<wire_uint_8_list>,
+          ffi.Pointer<wire_uint_8_list>, bool)>();
 
   void wire_resolve(
     int port_,
@@ -439,54 +339,23 @@ class TrustchainFfiMacosWire implements FlutterRustBridgeWireBase {
   late final _wire_resolve = _wire_resolvePtr
       .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
 
-  void wire_didVerify(
+  void wire_verify(
     int port_,
     ffi.Pointer<wire_uint_8_list> did,
-    int root_timestamp,
-  ) {
-    return _wire_didVerify(
-      port_,
-      did,
-      root_timestamp,
-    );
-  }
-
-  late final _wire_didVerifyPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
-              ffi.Uint32)>>('wire_didVerify');
-  late final _wire_didVerify = _wire_didVerifyPtr
-      .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>, int)>();
-
-  void wire_attest(
-    int port_,
-  ) {
-    return _wire_attest(
-      port_,
-    );
-  }
-
-  late final _wire_attestPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>('wire_attest');
-  late final _wire_attest = _wire_attestPtr.asFunction<void Function(int)>();
-
-  void wire_create(
-    int port_,
-    ffi.Pointer<wire_uint_8_list> doc_state_str,
     bool verbose,
   ) {
-    return _wire_create(
+    return _wire_verify(
       port_,
-      doc_state_str,
+      did,
       verbose,
     );
   }
 
-  late final _wire_createPtr = _lookup<
+  late final _wire_verifyPtr = _lookup<
       ffi.NativeFunction<
           ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
-              ffi.Bool)>>('wire_create');
-  late final _wire_create = _wire_createPtr
+              ffi.Bool)>>('wire_verify');
+  late final _wire_verify = _wire_verifyPtr
       .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>, bool)>();
 
   ffi.Pointer<wire_uint_8_list> new_uint_8_list_0(
