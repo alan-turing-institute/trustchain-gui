@@ -22,7 +22,7 @@ class _DIDPageState extends State<DIDPage> {
   var verifiedChainMap;
 
   void doResolve() {
-    api.resolve(did: resolveInputCtrl.text, verbose: true).then((value) => {
+    api.resolve(did: resolveInputCtrl.text).then((value) => {
       setState(() {
         resolvedDid = value;
       })
