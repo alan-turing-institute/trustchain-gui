@@ -35,7 +35,7 @@ void wire_attest(int64_t port_,
 
 void wire_resolve(int64_t port_, struct wire_uint_8_list *did);
 
-void wire_verify(int64_t port_, struct wire_uint_8_list *did, bool verbose);
+void wire_verify(int64_t port_, struct wire_uint_8_list *did);
 
 struct wire_uint_8_list *new_uint_8_list_0(int32_t len);
 

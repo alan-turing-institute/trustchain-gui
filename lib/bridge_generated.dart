@@ -31,8 +31,7 @@ abstract class TrustchainFfi {
 
   /// TODO: the below have no CLI implementation currently but are planned
   /// Verifies a given DID using a resolver available at localhost:3000, returning a result.
-  Future<String> verify(
-      {required String did, required bool verbose, dynamic hint});
+  Future<String> verify({required String did, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kVerifyConstMeta;
 }
@@ -104,15 +103,13 @@ class TrustchainFfiImpl implements TrustchainFfi {
         argNames: ["did"],
       );
 
-  Future<String> verify(
-      {required String did, required bool verbose, dynamic hint}) {
+  Future<String> verify({required String did, dynamic hint}) {
     var arg0 = _platform.api2wire_String(did);
-    var arg1 = verbose;
     return _platform.executeNormal(FlutterRustBridgeTask(
-      callFfi: (port_) => _platform.inner.wire_verify(port_, arg0, arg1),
+      callFfi: (port_) => _platform.inner.wire_verify(port_, arg0),
       parseSuccessData: _wire2api_String,
       constMeta: kVerifyConstMeta,
-      argValues: [did, verbose],
+      argValues: [did],
       hint: hint,
     ));
   }
@@ -120,7 +117,7 @@ class TrustchainFfiImpl implements TrustchainFfi {
   FlutterRustBridgeTaskConstMeta get kVerifyConstMeta =>
       const FlutterRustBridgeTaskConstMeta(
         debugName: "verify",
-        argNames: ["did", "verbose"],
+        argNames: ["did"],
       );
 
   void dispose() {
@@ -342,21 +339,19 @@ class TrustchainFfiWire implements FlutterRustBridgeWireBase {
   void wire_verify(
     int port_,
     ffi.Pointer<wire_uint_8_list> did,
-    bool verbose,
   ) {
     return _wire_verify(
       port_,
       did,
-      verbose,
     );
   }
 
   late final _wire_verifyPtr = _lookup<
       ffi.NativeFunction<
-          ffi.Void Function(ffi.Int64, ffi.Pointer<wire_uint_8_list>,
-              ffi.Bool)>>('wire_verify');
+          ffi.Void Function(
+              ffi.Int64, ffi.Pointer<wire_uint_8_list>)>>('wire_verify');
   late final _wire_verify = _wire_verifyPtr
-      .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>, bool)>();
+      .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
 
   ffi.Pointer<wire_uint_8_list> new_uint_8_list_0(
     int len,

@@ -58,7 +58,7 @@ class _DIDPageState extends State<DIDPage> {
   }
 
   void doVerify() {
-    api.verify(did: verifyDIDInputCtrl.text, verbose: true).then((val) => {
+    api.verify(did: verifyDIDInputCtrl.text).then((val) => {
       setState(() {
         print(val);
         Map<String, dynamic> map = jsonDecode(val);
