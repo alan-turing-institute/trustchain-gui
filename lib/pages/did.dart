@@ -17,8 +17,7 @@ class _DIDPageState extends State<DIDPage> {
   final attestControlledDidInputCtrl = TextEditingController();
   final verifyDIDInputCtrl = TextEditingController();
 
-  var resolvedDid = '';
-  var attestReturn = '';
+  String? resolvedDid;
   var verifiedChainMap;
 
   void doResolve() {
@@ -36,7 +35,7 @@ class _DIDPageState extends State<DIDPage> {
     } else {
       api.create(verbose: true);
     }
-  } 
+  }
   // docStateStr:
   // '''
   // {
@@ -106,9 +105,9 @@ class _DIDPageState extends State<DIDPage> {
                   SizedBox(
                     width: 200,
                     child: BaseButton.primary(onPressed: doResolve, child: Text("Resolve"))),
-                  if (resolvedDid.isNotEmpty)...[
+                  if (resolvedDid != null)...[
                     SizedBox(height: 20,),
-                    DIDDocumentWidget(model: DIDDocumentWidgetModel(resolvedDid,"TODO!"))
+                    DIDDocumentWidget(model: DIDDocumentWidgetModel(resolvedDid!,"TODO!"))
                   ]
                 ],
               ),
