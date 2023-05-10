@@ -2,13 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:learn_flutter/credible_imports/credible_shared_widget/base/button.dart';
+import 'package:trustchain_gui/credible_imports/credible_shared_widget/base/button.dart';
 import 'package:trustchain_dart/trustchain_dart.dart';
-import 'package:learn_flutter/credible_imports/trustchain_widgets/document.dart';
-import 'package:learn_flutter/credible_imports/trustchain_widgets/chain.dart';
-import 'package:learn_flutter/ffi.dart';
-import 'package:learn_flutter/ui/ui.dart';
-import 'package:learn_flutter/credible_imports/credible_shared_widget/tooltip_text.dart';
+import 'package:trustchain_gui/credible_imports/trustchain_widgets/document.dart';
+import 'package:trustchain_gui/credible_imports/trustchain_widgets/chain.dart';
+import 'package:trustchain_gui/ffi.dart';
+import 'package:trustchain_gui/ui/ui.dart';
+import 'package:trustchain_gui/credible_imports/credible_shared_widget/tooltip_text.dart';
 
 class _DIDPageState extends State<DIDPage> {
   final resolveInputCtrl = TextEditingController();

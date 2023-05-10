@@ -1,4 +1,4 @@
-import 'package:learn_flutter/ui/ui.dart';
+import 'package:trustchain_gui/ui/ui.dart';
 
 import '../trustchain_models/did.dart';
 import '../trustchain_widgets/item.dart';

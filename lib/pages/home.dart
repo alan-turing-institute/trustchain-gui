@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:learn_flutter/pages/did.dart';
-import 'package:learn_flutter/pages/splash.dart';
-import 'package:learn_flutter/pages/vc.dart';
-import 'package:learn_flutter/pages/sandbox.dart';
-import 'package:learn_flutter/ui/ui.dart';
+import 'package:trustchain_gui/pages/did.dart';
+import 'package:trustchain_gui/pages/splash.dart';
+import 'package:trustchain_gui/pages/vc.dart';
+import 'package:trustchain_gui/pages/sandbox.dart';
+import 'package:trustchain_gui/ui/ui.dart';
 
 class HomePage extends StatefulWidget {
   @override

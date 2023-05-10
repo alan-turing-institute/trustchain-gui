@@ -1,5 +1,5 @@
-name: learn_flutter
-description: A new Flutter project.
+name: trustchain_gui
+description: A GUI for the trustchain cli interface.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 

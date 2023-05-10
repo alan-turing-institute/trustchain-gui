@@ -1,4 +1,4 @@
-import 'package:learn_flutter/ui/base/constraints.dart';
+import 'package:trustchain_gui/ui/base/constraints.dart';
 import 'package:flutter/material.dart';
 
 class DegenConstraints extends UiConstraints {

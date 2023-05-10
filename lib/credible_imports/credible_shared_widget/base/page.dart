@@ -1,4 +1,4 @@
-import 'package:learn_flutter/ui/ui.dart';
+import 'package:trustchain_gui/ui/ui.dart';
 import '../app_bar.dart';
 import 'package:flutter/material.dart';
 

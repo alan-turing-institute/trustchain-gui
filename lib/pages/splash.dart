@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:learn_flutter/ui/ui.dart';
+import 'package:trustchain_gui/ui/ui.dart';
 
 
 class SplashPage extends StatelessWidget {

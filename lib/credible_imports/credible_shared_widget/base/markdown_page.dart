@@ -1,4 +1,4 @@
-import 'package:learn_flutter/ui/ui.dart';
+import 'package:trustchain_gui/ui/ui.dart';
 import '../back_leading_button.dart';
 import './page.dart';
 import '../spinner.dart';

@@ -1,5 +1,5 @@
-import 'package:learn_flutter/ui/base/text.dart';
-import 'package:learn_flutter/ui/degen/palette.dart';
+import 'package:trustchain_gui/ui/base/text.dart';
+import 'package:trustchain_gui/ui/degen/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 

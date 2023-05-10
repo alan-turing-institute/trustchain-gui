@@ -1,4 +1,4 @@
-import 'package:learn_flutter/ui/base/palette.dart';
+import 'package:trustchain_gui/ui/base/palette.dart';
 import 'package:flutter/material.dart';
 
 class CrediblePalette extends UiPalette {

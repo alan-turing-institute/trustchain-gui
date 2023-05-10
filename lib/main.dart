@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:learn_flutter/pages/home.dart';
-import 'package:learn_flutter/ui/ui.dart';
+import 'package:trustchain_gui/pages/home.dart';
+import 'package:trustchain_gui/ui/ui.dart';
 
 
 void main() {
