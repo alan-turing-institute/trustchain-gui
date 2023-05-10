@@ -7,19 +7,27 @@ class SplashPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(100.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text("Trustchain", 
-            style: GoogleFonts.inconsolata(
-              fontSize: 120,
-              fontWeight: FontWeight.bold,
-              color: UiKit.palette.icon),),
-          Text("Decentralised public key infrastructure", style: GoogleFonts.inconsolata(fontSize: 20),)
-        ],
-      ),
+    return CustomScrollView(
+      slivers: [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Padding(
+            padding: const EdgeInsets.all(100.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Trustchain", 
+                  style: GoogleFonts.inconsolata(
+                    fontSize: 120,
+                    fontWeight: FontWeight.bold,
+                    color: UiKit.palette.icon),),
+                Text("Decentralised public key infrastructure", style: GoogleFonts.inconsolata(fontSize: 20),)
+              ],
+            ),
+          ),
+        ),
+      ],
+      
     );
   }
 }

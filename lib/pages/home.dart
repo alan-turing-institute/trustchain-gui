@@ -35,10 +35,10 @@ class _HomePageState extends State<HomePage> {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Scaffold(
-          body: Row(
-            children: [
-              SafeArea(
-                child: NavigationRail(
+          body: SafeArea(
+            child: Row(
+              children: [
+                NavigationRail(
                   extended: constraints.maxWidth >= 600,
                   destinations: [
                     NavigationRailDestination(
@@ -65,14 +65,14 @@ class _HomePageState extends State<HomePage> {
                     });
                   },
                 ),
-              ),
-              Expanded(
-                child: Container(
-                  color: UiKit.palette.shadow,
-                  child: page,
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(color: UiKit.palette.shadow),
+                    child: page,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       }
