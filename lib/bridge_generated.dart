@@ -11,7 +11,8 @@ import 'dart:ffi' as ffi;
 
 abstract class TrustchainFfi {
   /// Creates a controlled DID from a passed document state, writing the associated create operation to file in the operations path.
-  Future<void> create({String? docState, required bool verbose, dynamic hint});
+  Future<String> create(
+      {String? docState, required bool verbose, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kCreateConstMeta;
 
@@ -45,12 +46,13 @@ class TrustchainFfiImpl implements TrustchainFfi {
   factory TrustchainFfiImpl.wasm(FutureOr<WasmModule> module) =>
       TrustchainFfiImpl(module as ExternalLibrary);
   TrustchainFfiImpl.raw(this._platform);
-  Future<void> create({String? docState, required bool verbose, dynamic hint}) {
+  Future<String> create(
+      {String? docState, required bool verbose, dynamic hint}) {
     var arg0 = _platform.api2wire_opt_String(docState);
     var arg1 = verbose;
     return _platform.executeNormal(FlutterRustBridgeTask(
       callFfi: (port_) => _platform.inner.wire_create(port_, arg0, arg1),
-      parseSuccessData: _wire2api_unit,
+      parseSuccessData: _wire2api_String,
       constMeta: kCreateConstMeta,
       argValues: [docState, verbose],
       hint: hint,

@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
@@ -20,6 +20,7 @@ class _DIDPageState extends State<DIDPage> {
   final verifyDIDInputCtrl = TextEditingController();
 
   String? resolvedDid;
+  final createdDid = ValueNotifier<String?>(null);
   var verifiedChainMap;
 
   void doResolve() async {
@@ -37,12 +38,17 @@ class _DIDPageState extends State<DIDPage> {
 
   void doCreate() async {
     var docState = createInputCtrl.text;
+    String fileName;
     try {
       if (docState.isNotEmpty) {
-        await api.create(verbose: true, docState: docState);
+        fileName = await api.create(verbose: true, docState: docState);
       } else {
-        await api.create(verbose: true);
+        fileName = await api.create(verbose: true);
       }
+
+      File file = await Storage.readTrustchainOperation(fileName);
+      createdDid.value = await file.readAsString();
+
     } on FfiException catch(e) {
       // print(e.message);
 
@@ -202,6 +208,22 @@ class _DIDPageState extends State<DIDPage> {
                   SizedBox(
                     width: 200,
                     child: BaseButton.primary(onPressed: doCreate, child: Text("Create"))),
+                  ValueListenableBuilder(
+                    valueListenable: createdDid,
+                    builder: (context, value, widget) {
+                      if (value != null) {
+                        return Column(
+                          children: [
+                            SizedBox(height: 20,),
+                          Text(value)
+                          ],
+                        );
+                      } else {
+                        return SizedBox.shrink();
+                      }
+                      
+                    }
+                  ),
                 ],
               ),
             )
