@@ -22,6 +22,8 @@ class _DIDPageState extends State<DIDPage> {
   final createdDid = ValueNotifier<String?>(null);
   final createInputError = ValueNotifier<String?>(null);
 
+  final attestInputError = ValueNotifier<String?>(null);
+
   final verifiedChain = ValueNotifier<String?>(null);
   final verifyInputError = ValueNotifier<String?>(null);
 
@@ -91,19 +93,20 @@ class _DIDPageState extends State<DIDPage> {
   // '''
 
   void doAttest() async {
+    attestInputError.value = null;
     try {
       await api.attest(did: attestDidInputCtrl.text,
                 controlledDid: attestControlledDidInputCtrl.text,
                 verbose: true);
     } on FfiException catch(e) {
       var err = FfiError.parseFfiError(e);
+      print("${err.varient.code}: ${err.info}");
       switch (err.varient) {
         case FfiError.failedToAttestdDID:
-          print("unexpected error attesting: ${err.info}");
+          attestInputError.value = "Attestation Failed: ${err.info}";
           break;
         default:
-          print("Unhandled Error!");
-          print(e.message);
+          attestInputError.value = "Unexpected Error: ${err.info}";
       }
     } catch (e) {
       rethrow;  // rethrow the error if it originates from dart rather than the ffi
@@ -280,17 +283,21 @@ class _DIDPageState extends State<DIDPage> {
                   SizedBox(height: 20,),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                    child: TextField(
-                      style: UiKit.text.textTheme.bodyMedium,
-                      decoration: InputDecoration(
-                        // border: OutlineInputBorder(),
-                        hintText: 'Enter a Controlled DID',
-                        hintStyle: UiKit.text.textTheme.bodyMedium,
-                        focusColor: UiKit.palette.textFieldBorder,
-                  
-                      ),
-                      controller: attestControlledDidInputCtrl,
-                    ),
+                    child: ValueListenableBuilder(
+                      valueListenable: attestInputError,
+                      builder: (context, attestErr, widget) {
+                        return TextField(
+                          style: UiKit.text.textTheme.bodyMedium,
+                          decoration: InputDecoration(
+                            hintText: 'Enter a Controlled DID',
+                            hintStyle: UiKit.text.textTheme.bodyMedium,
+                            focusColor: UiKit.palette.textFieldBorder,
+                            errorText: attestErr ?? attestErr,
+                          ),
+                          controller: attestControlledDidInputCtrl,
+                        );
+                      }
+                    )
                   ),
                   SizedBox(height: 20,),
                   SizedBox(
