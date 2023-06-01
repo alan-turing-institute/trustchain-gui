@@ -2,16 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 import 'package:trustchain_gui/credible_imports/credible_shared_widget/base/button.dart';
 import 'package:trustchain_dart/trustchain_dart.dart';
 import 'package:trustchain_gui/credible_imports/trustchain_widgets/document.dart';
-
-import 'package:trustchain_gui/credible_imports/trustchain_widgets/chain.dart';
 import 'package:trustchain_gui/ffi.dart';
 import 'package:trustchain_gui/ui/ui.dart';
-import 'package:trustchain_gui/credible_imports/credible_shared_widget/tooltip_text.dart';
 
 class _DIDPageState extends State<DIDPage> {
   final resolveInputCtrl = TextEditingController();
@@ -26,7 +22,8 @@ class _DIDPageState extends State<DIDPage> {
   final createdDid = ValueNotifier<String?>(null);
   final createInputError = ValueNotifier<String?>(null);
 
-  var verifiedChainMap;
+  final verifiedChain = ValueNotifier<String?>(null);
+  final verifyInputError = ValueNotifier<String?>(null);
 
   void doResolve() async {
     resolveInputError.value = null;
@@ -114,6 +111,7 @@ class _DIDPageState extends State<DIDPage> {
   }
 
   void doVerify() async {
+    verifyInputError.value = null;
     // api.verify(did: verifyDIDInputCtrl.text).then((val) => {
     //   setState(() {
     //     print(val);
@@ -122,17 +120,16 @@ class _DIDPageState extends State<DIDPage> {
     //   })
     // });
     try {
-      final chain = await api.verify(did: verifyDIDInputCtrl.text);
-      print(chain);
+      verifiedChain.value = await api.verify(did: verifyDIDInputCtrl.text);
     } on FfiException catch(e) {
-      // print(e.message);
       var err = FfiError.parseFfiError(e);
+      print("${err.varient.code}: ${err.info}");
       switch (err.varient) {
         case FfiError.failedToVerifyDID:
-          print("unexpected error verifying did: ${err.info}");
+          verifyInputError.value = "Verification Error: ${err.info}";
           break;
         default:
-          print("Unhandled Error!");
+          resolveInputError.value = "Unexpected Error: ${err.info}";
       }
     } catch (e) {
       rethrow;  // rethrow the error if it originates from dart rather than the ffi
@@ -320,45 +317,48 @@ class _DIDPageState extends State<DIDPage> {
                   SizedBox(height: 20,),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                    child: TextField(
-                      style: UiKit.text.textTheme.bodyMedium,
-                      decoration: InputDecoration(
-                        // border: OutlineInputBorder(),
-                        hintText: 'Enter a DID',
-                        hintStyle: UiKit.text.textTheme.bodyMedium,
-                        focusColor: UiKit.palette.textFieldBorder,
-                  
-                      ),
-                      controller: verifyDIDInputCtrl,
+                    child: ValueListenableBuilder(
+                      valueListenable: verifyInputError,
+                      builder: (context, verifyErr, widget) {
+                        return TextField(
+                          style: UiKit.text.textTheme.bodyMedium,
+                          decoration: InputDecoration(
+                            hintText: 'Enter a DID',
+                            hintStyle: UiKit.text.textTheme.bodyMedium,
+                            focusColor: UiKit.palette.textFieldBorder,
+                            errorText: verifyErr ?? verifyErr,
+                          ),
+                          controller: verifyDIDInputCtrl,
+                        );
+                      }
                     ),
                   ),
                   SizedBox(height: 20,),
                   SizedBox(
                     width: 200,
                     child: BaseButton.primary(onPressed: doVerify, child: Text("Verify"))),
-                  // if (verifiedChainMap != null)...[
-                  //   SizedBox(height: 20,),
-                  //   ListView(
-                  //   children: DIDChainWidgetModel.fromDIDChainModel(DIDChainModel.fromMap(verifiedChainMap)).data
-                  //       .map((w) => Padding(
-                  //             padding: const EdgeInsets.all(8.0),
-                  //             child: Row(
-                  //               children: [
-                  //                 Expanded(
-                  //                     flex: 20,
-                  //                     child: DIDDocumentWidget(model: w)),
-                  //                 Expanded(
-                  //                     flex: 2,
-                  //                     child: Icon(Icons.check_circle_rounded,
-                  //                         size: 40,
-                  //                         color:
-                  //                             Color.fromARGB(255, 7, 111, 10)))
-                  //               ],
-                  //             ),
-                  //           ))
-                  //       .toList(),
-                  //     )
-                  //   ]
+                  ValueListenableBuilder(
+                    valueListenable: verifiedChain,
+                    builder: (context, value, widget) {
+                      if (value != null) {
+                        return Column(
+                          children: [
+                            SizedBox(height: 20,),
+                            ExpandableText(
+                                value,
+                                expandText: 'show verified DID chain',
+                                collapseText: 'hide verified DID chain',
+                                maxLines: 1,
+                                linkColor: Colors.blue,
+                                expanded: true
+                            ),
+                          ],
+                        );
+                      } else {
+                        return SizedBox.shrink();
+                      }
+                    }
+                  ),
                 ],
               ),
             )
