@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
@@ -20,23 +21,37 @@ class _DIDPageState extends State<DIDPage> {
   final verifyDIDInputCtrl = TextEditingController();
 
   String? resolvedDid;
+  final resolveInputError = ValueNotifier<String?>(null);
+
   final createdDid = ValueNotifier<String?>(null);
+  final createInputError = ValueNotifier<String?>(null);
+
   var verifiedChainMap;
 
   void doResolve() async {
+    resolveInputError.value = null;
     try {
       var did = await api.resolve(did: resolveInputCtrl.text);
       setState(() {
         resolvedDid = did;
       });
-    } on FfiException catch(err) {
-      print(err);
-    } catch (err) {
+    } on FfiException catch(e) {
+      var err = FfiError.parseFfiError(e);
+      print("${err.varient.code}: ${err.info}");
+      switch (err.varient) {
+        case FfiError.failedToResolveDID:
+          resolveInputError.value = "Resolve Error: ${err.info}";
+          break;
+        default:
+          resolveInputError.value = "Unexpected Error: ${err.info}";
+      }
+    } catch (e) {
       rethrow;  // rethrow the error if it originates from dart rather than the ffi
     }
   }
 
   void doCreate() async {
+    createInputError.value = null;
     var docState = createInputCtrl.text;
     String fileName;
     try {
@@ -50,18 +65,14 @@ class _DIDPageState extends State<DIDPage> {
       createdDid.value = await file.readAsString();
 
     } on FfiException catch(e) {
-      // print(e.message);
-
       var err = FfiError.parseFfiError(e);
+      print("${err.varient.code}: ${err.info}");
       switch (err.varient) {
         case FfiError.failedToDeserialise:
-          print("You input invalid json: ${err.info}");
-          break;
-        case FfiError.failedToCreateDID:
-          print("unexpected error creating DID: ${err.info}");
+          createInputError.value = "Invalid JSON: ${err.info}";
           break;
         default:
-          print("Unhandled Error!");
+          createInputError.value = "Unexpected Error: ${err.info}";
       }
     } catch (e) {
       rethrow;  // rethrow the error if it originates from dart rather than the ffi
@@ -151,16 +162,21 @@ class _DIDPageState extends State<DIDPage> {
                   SizedBox(height: 20,),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                    child: TextField(
-                      style: UiKit.text.textTheme.bodyMedium,
-                      decoration: InputDecoration(
-                        // border: OutlineInputBorder(),
-                        hintText: 'Enter a DID',
-                        hintStyle: UiKit.text.textTheme.bodyMedium,
-                        focusColor: UiKit.palette.textFieldBorder,
-                  
-                      ),
-                      controller: resolveInputCtrl,
+                    child: ValueListenableBuilder(
+                      valueListenable: resolveInputError,
+                      builder: (context,resolveErr, widget) {
+                        return TextField(
+                          style: UiKit.text.textTheme.bodyMedium,
+                          decoration: InputDecoration(
+                            // border: OutlineInputBorder(),
+                            hintText: 'Enter a DID',
+                            hintStyle: UiKit.text.textTheme.bodyMedium,
+                            focusColor: UiKit.palette.textFieldBorder,
+                            errorText: resolveErr ?? resolveErr,
+                          ),
+                          controller: resolveInputCtrl,
+                        );
+                      }
                     ),
                   ),
                   SizedBox(height: 20,),
@@ -192,16 +208,21 @@ class _DIDPageState extends State<DIDPage> {
                   SizedBox(height: 20,),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                    child: TextField(
-                      style: UiKit.text.textTheme.bodyMedium,
-                      decoration: InputDecoration(
-                        // border: OutlineInputBorder(),
-                        hintText: 'Optionally enter doc-state',
-                        hintStyle: UiKit.text.textTheme.bodyMedium,
-                        focusColor: UiKit.palette.textFieldBorder,
-                  
-                      ),
-                      controller: createInputCtrl,
+                    child: ValueListenableBuilder(
+                      valueListenable: createInputError,
+                      builder: (context, createErr, widget) {
+                        return TextField(
+                          style: UiKit.text.textTheme.bodyMedium,
+                          decoration: InputDecoration(
+                            // border: OutlineInputBorder(),
+                            hintText: 'Optionally enter doc-state',
+                            hintStyle: UiKit.text.textTheme.bodyMedium,
+                            focusColor: UiKit.palette.textFieldBorder,
+                            errorText: createErr ?? createErr,
+                          ),
+                          controller: createInputCtrl,
+                        );
+                      }
                     ),
                   ),
                   SizedBox(height: 20,),
@@ -215,13 +236,19 @@ class _DIDPageState extends State<DIDPage> {
                         return Column(
                           children: [
                             SizedBox(height: 20,),
-                          Text(value)
+                            ExpandableText(
+                                value,
+                                expandText: 'show created DID',
+                                collapseText: 'hide created DID',
+                                maxLines: 1,
+                                linkColor: Colors.blue,
+                                expanded: true
+                            ),
                           ],
                         );
                       } else {
                         return SizedBox.shrink();
                       }
-                      
                     }
                   ),
                 ],

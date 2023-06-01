@@ -23,6 +23,7 @@ dependencies:
   logging: ^1.0.2
   package_info_plus: ^1.4.2
   flutter_modular: ^5.0.0
+  expandable_text: ^2.3.0
 
   trustchain_dart:
     git:
