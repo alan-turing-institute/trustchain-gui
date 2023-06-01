@@ -35,6 +35,14 @@ abstract class TrustchainFfi {
   Future<String> verify({required String did, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kVerifyConstMeta;
+
+  Future<String> vcSign(
+      {required String serialCredential,
+      required String did,
+      String? keyId,
+      dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kVcSignConstMeta;
 }
 
 class TrustchainFfiImpl implements TrustchainFfi {
@@ -120,6 +128,29 @@ class TrustchainFfiImpl implements TrustchainFfi {
       const FlutterRustBridgeTaskConstMeta(
         debugName: "verify",
         argNames: ["did"],
+      );
+
+  Future<String> vcSign(
+      {required String serialCredential,
+      required String did,
+      String? keyId,
+      dynamic hint}) {
+    var arg0 = _platform.api2wire_String(serialCredential);
+    var arg1 = _platform.api2wire_String(did);
+    var arg2 = _platform.api2wire_opt_String(keyId);
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_vc_sign(port_, arg0, arg1, arg2),
+      parseSuccessData: _wire2api_String,
+      constMeta: kVcSignConstMeta,
+      argValues: [serialCredential, did, keyId],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kVcSignConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "vc_sign",
+        argNames: ["serialCredential", "did", "keyId"],
       );
 
   void dispose() {
@@ -354,6 +385,31 @@ class TrustchainFfiWire implements FlutterRustBridgeWireBase {
               ffi.Int64, ffi.Pointer<wire_uint_8_list>)>>('wire_verify');
   late final _wire_verify = _wire_verifyPtr
       .asFunction<void Function(int, ffi.Pointer<wire_uint_8_list>)>();
+
+  void wire_vc_sign(
+    int port_,
+    ffi.Pointer<wire_uint_8_list> serial_credential,
+    ffi.Pointer<wire_uint_8_list> did,
+    ffi.Pointer<wire_uint_8_list> key_id,
+  ) {
+    return _wire_vc_sign(
+      port_,
+      serial_credential,
+      did,
+      key_id,
+    );
+  }
+
+  late final _wire_vc_signPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(
+              ffi.Int64,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>,
+              ffi.Pointer<wire_uint_8_list>)>>('wire_vc_sign');
+  late final _wire_vc_sign = _wire_vc_signPtr.asFunction<
+      void Function(int, ffi.Pointer<wire_uint_8_list>,
+          ffi.Pointer<wire_uint_8_list>, ffi.Pointer<wire_uint_8_list>)>();
 
   ffi.Pointer<wire_uint_8_list> new_uint_8_list_0(
     int len,

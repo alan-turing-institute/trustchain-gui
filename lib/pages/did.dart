@@ -78,19 +78,6 @@ class _DIDPageState extends State<DIDPage> {
     }
     
   }
-  // docStateStr:
-  // '''
-  // {
-  //   "services": [
-  //     {
-  //       "id": "12345",
-  //       "type": "6789101112",
-  //       "serviceEndpoint": "https://testendpointnameeasytospotlater.com"
-  //     }
-      
-  //   ]
-  // }
-  // '''
 
   void doAttest() async {
     attestInputError.value = null;
@@ -239,7 +226,7 @@ class _DIDPageState extends State<DIDPage> {
                             ExpandableText(
                                 value,
                                 expandText: 'show created DID',
-                                collapseText: 'hide created DID',
+                                collapseText: '\n\n hide created DID',
                                 maxLines: 1,
                                 linkColor: Colors.blue,
                                 expanded: true
@@ -354,7 +341,7 @@ class _DIDPageState extends State<DIDPage> {
                             ExpandableText(
                                 value,
                                 expandText: 'show verified DID chain',
-                                collapseText: 'hide verified DID chain',
+                                collapseText: '\n\n hide verified DID chain',
                                 maxLines: 1,
                                 linkColor: Colors.blue,
                                 expanded: true
