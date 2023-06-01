@@ -1,6 +1,6 @@
 import 'package:trustchain_gui/ui/ui.dart';
 
-import '../trustchain_models/did.dart';
+import 'package:trustchain_dart/trustchain_dart.dart';
 import '../trustchain_widgets/item.dart';
 import '../credible_shared_widget/base/box_decoration.dart';
 import 'package:flutter/cupertino.dart';

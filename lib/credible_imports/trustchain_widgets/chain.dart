@@ -1,4 +1,4 @@
-import '../trustchain_models/chain.dart';
+import 'package:trustchain_dart/trustchain_dart.dart';
 // import '../trustchain_models/did.dart';
 // import 'package:credible/app/pages/did/widget/item.dart';
 import '../trustchain_widgets/document.dart';

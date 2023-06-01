@@ -62,7 +62,12 @@
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "TRUSTCHAIN_DATA"
-            value = "/Users/echapman/Library/Containers/com.example.learnFlutter/Data/Documents/.trustchain/"
+            value = "/Users/echapman/Library/Containers/com.example.trustchainGui/Data/Documents/.trustchain/"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "TRUSTCHAIN_CONFIG"
+            value = "/Users/echapman/Library/Containers/com.example.trustchainGui/Data/Documents/.trustchain/trustchain_config.toml"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>

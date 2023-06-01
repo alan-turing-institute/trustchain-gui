@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 import 'package:trustchain_gui/credible_imports/credible_shared_widget/base/button.dart';
 import 'package:trustchain_dart/trustchain_dart.dart';
 import 'package:trustchain_gui/credible_imports/trustchain_widgets/document.dart';
+
 import 'package:trustchain_gui/credible_imports/trustchain_widgets/chain.dart';
 import 'package:trustchain_gui/ffi.dart';
 import 'package:trustchain_gui/ui/ui.dart';
@@ -20,21 +22,45 @@ class _DIDPageState extends State<DIDPage> {
   String? resolvedDid;
   var verifiedChainMap;
 
-  void doResolve() {
-    api.resolve(did: resolveInputCtrl.text).then((value) => {
+  void doResolve() async {
+    try {
+      var did = await api.resolve(did: resolveInputCtrl.text);
       setState(() {
-        resolvedDid = value;
-      })
-    });
+        resolvedDid = did;
+      });
+    } on FfiException catch(err) {
+      print(err);
+    } catch (err) {
+      rethrow;  // rethrow the error if it originates from dart rather than the ffi
+    }
   }
 
-  void doCreate() {
+  void doCreate() async {
     var docState = createInputCtrl.text;
-    if (docState.isNotEmpty) {
-      api.create(verbose: true, docState: docState);
-    } else {
-      api.create(verbose: true);
+    try {
+      if (docState.isNotEmpty) {
+        await api.create(verbose: true, docState: docState);
+      } else {
+        await api.create(verbose: true);
+      }
+    } on FfiException catch(e) {
+      // print(e.message);
+
+      var err = FfiError.parseFfiError(e);
+      switch (err.varient) {
+        case FfiError.failedToDeserialise:
+          print("You input invalid json: ${err.info}");
+          break;
+        case FfiError.failedToCreateDID:
+          print("unexpected error creating DID: ${err.info}");
+          break;
+        default:
+          print("Unhandled Error!");
+      }
+    } catch (e) {
+      rethrow;  // rethrow the error if it originates from dart rather than the ffi
     }
+    
   }
   // docStateStr:
   // '''
@@ -50,20 +76,50 @@ class _DIDPageState extends State<DIDPage> {
   // }
   // '''
 
-  void doAttest() {
-    api.attest(did: attestDidInputCtrl.text,
+  void doAttest() async {
+    try {
+      await api.attest(did: attestDidInputCtrl.text,
                 controlledDid: attestControlledDidInputCtrl.text,
                 verbose: true);
+    } on FfiException catch(e) {
+      var err = FfiError.parseFfiError(e);
+      switch (err.varient) {
+        case FfiError.failedToAttestdDID:
+          print("unexpected error attesting: ${err.info}");
+          break;
+        default:
+          print("Unhandled Error!");
+          print(e.message);
+      }
+    } catch (e) {
+      rethrow;  // rethrow the error if it originates from dart rather than the ffi
+    }
   }
 
-  void doVerify() {
-    api.verify(did: verifyDIDInputCtrl.text).then((val) => {
-      setState(() {
-        print(val);
-        Map<String, dynamic> map = jsonDecode(val);
-        verifiedChainMap = map.cast<String, List<Map<String, dynamic>>>();
-      })
-    });
+  void doVerify() async {
+    // api.verify(did: verifyDIDInputCtrl.text).then((val) => {
+    //   setState(() {
+    //     print(val);
+    //     Map<String, dynamic> map = jsonDecode(val);
+    //     verifiedChainMap = map.cast<String, List<Map<String, dynamic>>>();
+    //   })
+    // });
+    try {
+      final chain = await api.verify(did: verifyDIDInputCtrl.text);
+      print(chain);
+    } on FfiException catch(e) {
+      // print(e.message);
+      var err = FfiError.parseFfiError(e);
+      switch (err.varient) {
+        case FfiError.failedToVerifyDID:
+          print("unexpected error verifying did: ${err.info}");
+          break;
+        default:
+          print("Unhandled Error!");
+      }
+    } catch (e) {
+      rethrow;  // rethrow the error if it originates from dart rather than the ffi
+    }
   }
 
   @override
@@ -107,7 +163,11 @@ class _DIDPageState extends State<DIDPage> {
                     child: BaseButton.primary(onPressed: doResolve, child: Text("Resolve"))),
                   if (resolvedDid != null)...[
                     SizedBox(height: 20,),
-                    DIDDocumentWidget(model: DIDDocumentWidgetModel(resolvedDid!,"TODO!"))
+                    DIDDocumentWidget(
+                      model: DIDDocumentWidgetModel.fromDIDModel(
+                        DIDModel.fromMap(
+                          jsonDecode(resolvedDid!)
+                    )))
                   ]
                 ],
               ),
