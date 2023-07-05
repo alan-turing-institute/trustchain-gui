@@ -31,7 +31,10 @@ dependencies:
       ref: 1-migration
 
 dev_dependencies:
+  test: ^1.21.0
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
 
   flutter_lints: ^2.0.0
