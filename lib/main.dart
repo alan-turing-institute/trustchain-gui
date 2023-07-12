@@ -20,7 +20,7 @@ class _AppWidgetState extends State<AppWidget> {
       backgroundColor: UiKit.palette.background,
       primaryColor: UiKit.palette.primary,
       // ignore: deprecated_member_use
-      accentColor: UiKit.palette.accent,
+      // accentColor: UiKit.palette.accent,
       textTheme: UiKit.text.textTheme,
     );
 
