@@ -26,7 +26,7 @@ abstract class TrustchainFfi {
 
   FlutterRustBridgeTaskConstMeta get kAttestConstMeta;
 
-  /// Resolves a given DID using a resolver available at localhost:3000
+  /// Resolves a given DID using a resolver available at "ion_endpoint"
   Future<String> resolve({required String did, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kResolveConstMeta;
