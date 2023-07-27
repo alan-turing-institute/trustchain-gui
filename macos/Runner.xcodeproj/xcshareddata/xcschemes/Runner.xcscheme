@@ -37,6 +37,17 @@
          </BuildableReference>
       </MacroExpansion>
       <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "331C80D4294CF70F00263BE5"
+               BuildableName = "RunnerTests.xctest"
+               BlueprintName = "RunnerTests"
+               ReferencedContainer = "container:Runner.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -61,13 +72,13 @@
       </BuildableProductRunnable>
       <EnvironmentVariables>
          <EnvironmentVariable
-            key = "TRUSTCHAIN_DATA"
-            value = "/Users/echapman/Library/Containers/com.example.trustchainGui/Data/Documents/.trustchain/"
+            key = "TRUSTCHAIN_CONFIG"
+            value = "/Users/echapman/Library/Containers/com.example.trustchainGui/Data/Documents/.trustchain/trustchain_config.toml"
             isEnabled = "YES">
          </EnvironmentVariable>
          <EnvironmentVariable
-            key = "TRUSTCHAIN_CONFIG"
-            value = "/Users/echapman/Library/Containers/com.example.trustchainGui/Data/Documents/.trustchain/trustchain_config.toml"
+            key = "TRUSTCHAIN_DATA"
+            value = "/Users/echapman/Library/Containers/com.example.trustchainGui/Data/Documents/.trustchain/"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>

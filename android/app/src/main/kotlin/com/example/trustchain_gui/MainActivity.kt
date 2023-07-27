@@ -1,4 +1,4 @@
-package com.example.learn_flutter
+package com.example.trustchain_gui
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -225,11 +225,10 @@ class _DIDPageState extends State<DIDPage> {
                             SizedBox(height: 20,),
                             ExpandableText(
                                 value,
-                                expandText: 'show created DID',
-                                collapseText: '\n\n hide created DID',
+                                expandText: 'show',
+                                collapseText: '\n\n hide',
                                 maxLines: 1,
                                 linkColor: Colors.blue,
-                                expanded: true
                             ),
                           ],
                         );
@@ -340,8 +339,8 @@ class _DIDPageState extends State<DIDPage> {
                             SizedBox(height: 20,),
                             ExpandableText(
                                 value,
-                                expandText: 'show verified DID chain',
-                                collapseText: '\n\n hide verified DID chain',
+                                expandText: 'show',
+                                collapseText: '\n\n hide',
                                 maxLines: 1,
                                 linkColor: Colors.blue,
                                 expanded: true

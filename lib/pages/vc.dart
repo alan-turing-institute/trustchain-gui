@@ -103,8 +103,8 @@ class VCPage extends StatelessWidget {
                             SizedBox(height: 20,),
                             ExpandableText(
                                 value,
-                                expandText: 'show signed VC',
-                                collapseText: '\n\n hide signed VC',
+                                expandText: 'show',
+                                collapseText: '\n\n hide',
                                 maxLines: 1,
                                 linkColor: Colors.blue,
                                 expanded: true

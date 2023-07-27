@@ -1,6 +1,6 @@
 {
-    "name": "learn_flutter",
-    "short_name": "learn_flutter",
+    "name": "trustchain_gui",
+    "short_name": "trustchain_gui",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
